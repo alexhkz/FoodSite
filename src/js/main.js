@@ -222,4 +222,57 @@ window.addEventListener('DOMContentLoaded', () => {
 		'.menu .container',
 		'menu__item'
 	).render();
+
+	// Forms
+
+	const forms = document.querySelectorAll('form'); // собираем формы
+	
+	const message = {  // создаём объект с уведомлениями пользователя
+		loading: 'Загрузка',
+		success: 'Спасибо! Скоро мы с вами свяжемся',
+		failure: 'Что-то пошло не так...'
+	};
+
+	forms.forEach(item => {
+		postData(item); // под каждую из форм подвязываем функцию postData
+	});
+
+	function postData(form) { // функция, являющаяся обработчиком событий при отправке
+		form.addEventListener('submit', (e) => { // при заполнении полей
+			e.preventDefault();
+
+			const statusMessage = document.createElement('div'); // создаём новый див на странице
+			statusMessage.classList.add('status'); // добавляем диву класс
+			statusMessage.textContent = message.loading; // при отправке формы сообшаем пользователю о загрузке
+			form.append(statusMessage); // показывает сообщение на странице (добавляем к форме)
+
+			const request = new XMLHttpRequest();
+			request.open('POST', 'server.php');  // метод и путь на который ссылаемся
+
+			request.setRequestHeader('Content-type', 'application/json');
+			const formData = new FormData(form); // создаём формдату с данными из инпутов
+
+			const object = {}; // переберём данные из формы и поместив в object
+			formData.forEach(function(value, key) {
+				object[key] = value;
+			});
+
+			const json = JSON.stringify(object); // конвертируем данные в json формат
+
+			request.send(json); // отправляем данные из инпутов
+
+			request.addEventListener('load', () => { // когда запрос выполнился
+				if (request.status === 200) {
+					console.log(request.response);
+					statusMessage.textContent = message.success;  // оповещаем пользователя об успехе
+					form.reset(); // сбрасывем форму
+					setTimeout(() => {
+						statusMessage.remove(); // удаляем блок с сообщением со страницы через 2 сек.
+					}, 2000);
+				} else {
+					statusMessage.textContent = message.failure; // при ошибке 
+				}
+			});
+		});
+	}
 });
