@@ -1,8 +1,4 @@
-function timer() {
-	// Timer
-
-	//  конечная дата
-	const deadline = '2022-05-09'; 
+function timer(id, deadline) {
  
 	//функция по расчету промежутков
 	// создаем локальную переменную в которую методом Date.parse разбираем строковое значение и переводим его в милисекунды. от этих милисекунд отнимаем также переведенное в милисекунды ВРЕМЯ ДАТЫ ИЗ СИСТЕМЫ. получаем разницу которую и будет отщитывать таймер.
@@ -61,7 +57,7 @@ function timer() {
 	}
 	} 
 
-	setClock('.timer', deadline);
+	setClock(id, deadline);
 }
 
-module.exports = timer;
+export default timer;
